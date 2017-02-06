@@ -226,3 +226,148 @@ console.log(`Last name: ${lastName} phone: ${phone}`);
 
 var fpack = require('./fpack');
 console.log(fpack.f(1,5,7));
+
+// EX9 Classes and Inheritance with es2015
+// A) The declaration below defines a Shape class, whicha as it's only properties has a color field +  a getArea() and a getPerimeter() 
+// function which both returns undefined. This is the closest we get to an abstract method in Java.
+console.log("\n EX9 A");
+class Shape {
+  constructor(color){
+    this._color = color;
+  }
+  getColor() {
+    return this._color;
+  }
+  setColor(newColor){
+    this._color = newColor;
+  }  
+  getArea() {
+    return undefined;
+  }
+  getPerimeter() {
+    return undefined;
+  }
+
+  get color(){
+    return this._color;
+  }
+}
+
+var s1 = new Shape("red");
+console.log(s1.getColor());
+s1.setColor("blue");
+console.log(s1.getColor());
+// Provide the class with a nice (using template literals) toString() method  + a getter/setter for the colour property. Test the class constructor, the getter/setter and the two methods.
+
+
+// B) Create a new class Circle that should extend the Shape class.
+// Provide the class with:
+// A radius field
+// A constructor that takes both colour and radius.
+// Overwritten versions of the three methods defined in the Base
+// Getter/Setter for radius
+// Test the class constructor, the getters/setters and the three methods.
+console.log("\n EX9 B");
+class Circle extends Shape {
+  constructor(color, radius){
+    super(color);
+    this._radius = radius;
+  }
+
+  getRadius() {
+    return this._radius;
+  }
+  setRadius(newRadius){
+    this._radius = newRadius;
+  }
+
+  get radius(){
+    return this._radius;
+  }
+}
+
+var c1 = new Circle("pink",2);
+console.log(c1.getColor()+c1.getRadius());
+c1.setColor("teal");
+c1.setRadius(20);
+console.log(c1.getColor()+c1.getRadius());
+
+// C) Create a new class Cylinder (agreed, not a perfect inheritance example) that should extend the Circle class.
+// Provide the class with:
+// A height field
+// A constructor that takes colour, radius and height.
+// Overwritten versions of the three methods defined in the Base (getPerimeter() should return undefined)
+// A getVolume() method
+// Getter/Setter for height
+// Test the new class
+console.log("\n EX9 C");
+class Cylinder extends Circle {
+  constructor(color, radius, height){
+    super(color,radius);
+    this._height = height;
+  };
+  
+  getVolume(){
+    return this._height * super.getRadius();
+  }
+
+  get volume(){
+    return this._height * super.getRadius();
+  } 
+}
+
+var cyl1 = new Cylinder("black",3,10);
+console.log(cyl1.getVolume());
+
+
+// D) The getX() methods (getArea(), getPerimeter() and getVolume()) are all candidates for a getter.
+// Rewrite the three methods to use the getter syntax; that is console.log(circle.radius) instead of console.log(circle.getRadius())
+
+console.log("\n EX9 D");
+console.log(s1.color);
+console.log(c1.radius);
+console.log(cyl1.volume);
+
+// EX10 - the iteration Protocols
+// Skim the sections related to Iteration Protocols and implement (and understand) the two examples from the slides: 
+// http://js-plaul.rhcloud.com/es2015_typescript/es5VStypescript.html#8 
+
+console.log("\n EX10 - first example");
+
+function makeIterator(array) {
+  var nextIndex = 0;
+
+  return {
+    next: function () {
+      return nextIndex < array.length ?
+      {value: array[nextIndex++], done: false} :
+      {done: true};
+    }
+  }
+}
+//Here we can do:
+let it = makeIterator(['yo', 'ya']);
+console.log(it.next().value); // 'yo'
+console.log(it.next().value); // 'ya'
+console.log(it.next().done);  // true
+
+console.log("\n EX10 - second example");
+function makeIterator2(array) {
+  var itt= {};
+  itt[Symbol.iterator] = function() {
+    var nextIndex = 0;
+    return {
+      next: function () {
+        return nextIndex < array.length ?
+        {value: array[nextIndex++], done: false} :
+        {done: true};
+      }
+    }
+  }
+  return itt;
+}
+//Here we can iterate using the for-of syntax:
+var it2 = makeIterator2(['yo', 'ya']);
+for(let i of it2){
+  console.log(i);
+}
